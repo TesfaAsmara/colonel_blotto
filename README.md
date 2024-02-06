@@ -14,6 +14,9 @@ I am interested in multiple directions:
     - Can we quantify the information gain from the subset of games that we have been able to simulate?
     - We can represent the relationship between configurations utilizing a directed graph. 
     What methods can we apply to the graph?
+    - I am concerned about the environmental impact of this research. A previous teammate named Jacob Wu 
+    "How much does the temperature of the Earth increase when we send an email?" In that same manner,
+    how much did my experiments increase the temperature of the Earth? How can we mitigate this?
 
 You can follow along with my progress through the [notes](notes/) directory.
 

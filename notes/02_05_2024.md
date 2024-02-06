@@ -15,3 +15,8 @@
     - wrote Make command to record execution profiling metrics
         - wrote `plot_profiling.py` to extract, visualize the execution profiling metrics in `execution_times.png`,
            for the purpose of comparing the code
+
+TODO:
+    Estimate disk used for each folder in the results/ directory, get the average size of each file, get the median size of each file
+    Ask for storage
+    Have Youngsu double check C code
