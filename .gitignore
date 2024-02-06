@@ -6,3 +6,6 @@ configurations/
 
 # Execution profiling directory
 profiling/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
