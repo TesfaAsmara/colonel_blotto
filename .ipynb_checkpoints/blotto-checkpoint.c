@@ -1,13 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// Define the maximum number of castles and strategies
-// and the maximum length of filenames for results
-// create results/C02_T03/ folder
-#define MAX_CASTLES 5
-#define MAX_STRATEGIES 1001
+#include <unistd.h>
 #define MAX_FILENAME_LENGTH 100
-#define STRATEGY_FILE "configurations.txt"
 
 // Function: game
 // --------------------
@@ -81,35 +76,17 @@ void play_game(int i, int j, int* player1, int* player2, int numCastles, int num
     }
 }
 
-// Function: read_strategies
-// --------------------
-// Reads strategies from a file and stores them in an array.
-//
-// filename: Name of the file containing strategies.
-// strategies: 2D array where the read strategies will be stored.
-//
-// returns: Number of strategies read from the file.
-//
-int read_strategies(const char* filename, int strategies[][MAX_CASTLES]) {
-    FILE* file = fopen(filename, "r");
-    if (file == NULL) {
-        printf("Unable to open file: %s\n", filename);
-        return 0;
-    }
 
-    int count = 0;
-    char line[1024];
-    while (fgets(line, sizeof(line), file)) {
-        char* token = strtok(line, ",");
-        int index = 0;
-        while (token != NULL && index < MAX_CASTLES) {
-            strategies[count][index++] = atoi(token);
-            token = strtok(NULL, ",");
-        }
-        count++;
+// Function to find factorial of given number (https://www.geeksforgeeks.org/c-program-for-factorial-of-a-number/)
+long long int factorial(long long int num) {
+    long long int result = 1, i;
+ 
+    for(i = 1; i <= num; i++) { // Start a loop to calculate factorial.
+        result = result * i;  // Calculate factorial.
+        printf("result = %llu\n", result);
     }
-    fclose(file);
-    return count;
+    
+    return result;
 }
 
 // Function: tournament
@@ -120,10 +97,40 @@ int read_strategies(const char* filename, int strategies[][MAX_CASTLES]) {
 // numTroops: Number of troops in the game.
 //
 void tournament(int numCastles, int numTroops) {
-    int strategies[MAX_STRATEGIES][MAX_CASTLES];
-    int count = read_strategies(STRATEGY_FILE, strategies);
+    char configurations_filename[100];
+    long long int max_configurations_numerator = factorial(numTroops+numCastles-1);
+    long long int max_configurations_denominator = factorial(numTroops)*factorial(numCastles-1);
+    long long int MAX_CONFIGURATIONS = max_configurations_numerator/max_configurations_denominator;
+    printf("MAX_CONFIGS =  %lld\n numerator = %lld\n denominator = %lld\n", MAX_CONFIGURATIONS,max_configurations_numerator,  max_configurations_denominator);
+    int strategies[MAX_CONFIGURATIONS][numCastles];
+
+    // Create filename for the configurations file
+    sprintf(configurations_filename, "configurations/C%02d_T%03d.txt", numCastles, numTroops);
+    
+    FILE* configurations_file = fopen(configurations_filename, "r");
+    if (configurations_file == NULL) {
+        printf("Unable to open file: %s\n", configurations_filename);
+        return;
+    }
+
+    int count = 0;
+    char line[1024];
+    while (fgets(line, sizeof(line), configurations_file)) {
+        char* token = strtok(line, ",");
+        int index = 0;
+        while (token != NULL && index < MAX_CONFIGURATIONS) {
+            strategies[count][index++] = atoi(token);
+            token = strtok(NULL, ",");
+        }
+        count++;
+    }
+    fclose(configurations_file);
+    
     if (count == 0) {
         printf("No strategies read from the file.\n");
+        return;
+    } else if (count != MAX_CONFIGURATIONS) {
+        printf("%d strategies read from the file does not match expected %lld\n", count, MAX_CONFIGURATIONS);
         return;
     }
 
@@ -136,8 +143,31 @@ void tournament(int numCastles, int numTroops) {
     }
 }
 
-int main() {
-    int numCastles = 5, numTroops = 10;
+int main(int argc, char *argv[]) {
+    int numCastles = 0;
+    int numTroops = 0;
+    int opt;
+
+    // Parse command-line arguments for numCastles and numTroops
+    while ((opt = getopt(argc, argv, "c:t:")) != -1) {
+        switch (opt) {
+            case 'c':
+                numCastles = atoi(optarg);
+                break;
+            case 't':
+                numTroops = atoi(optarg);
+                break;
+            default:
+                fprintf(stderr, "Usage: %s -c numCastles -t numTroops\n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
+    }
+
+    if (numCastles <= 0 || numTroops <= 0) {
+        fprintf(stderr, "Invalid numCastles or numTroops values.\n");
+        exit(EXIT_FAILURE);
+    }
+    
     tournament(numCastles, numTroops);
     return 0;
 }

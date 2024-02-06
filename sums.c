@@ -1,7 +1,7 @@
 #include <stdio.h>
-
-// Define the number of trenches or categories we are distributing a total sum across
-#define NUM_TRENCHES 2
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 // Function: printPermutationToFile
 // --------------------
@@ -29,37 +29,72 @@ void printPermutationToFile(FILE *file, int permutation[], int length) {
 // file: Pointer to the file where the permutations will be written.
 // length: Remaining length of the permutation array to fill.
 // total_sum: Remaining sum to be distributed across the remaining length.
-// current_sum: Sum distributed so far (used for calculating remaining sum).
 // permutation: Array of integers representing the current state of the permutation.
 // pos: Current position in the permutation array to fill.
 //
-void sums(FILE *file, int length, int total_sum, int current_sum, int permutation[], int pos) {
+void sums(FILE *file, int length, int total_sum, int permutation[], int pos) {
     if (length == 1) {
         permutation[pos] = total_sum;
         // Print the permutation to the configurations file
-        printPermutationToFile(file, permutation, NUM_TRENCHES);
+        printPermutationToFile(file, permutation, pos + 1);
     } else {
         for (int value = 0; value <= total_sum; value++) {
             permutation[pos] = value;
-            sums(file, length - 1, total_sum - value, current_sum + value, permutation, pos + 1);
+            sums(file, length - 1, total_sum - value, permutation, pos + 1);
         }
     }
 }
 
-// The main function of the program
-int main() {
-    // Open the configurations file for writing
-    FILE *file = fopen("configurations.txt", "w");
-    // Define the length of permutations and total sum to be distributed
-    int length = 2;  // Example length
-    int total_sum = 100;  // Example total sum
-    int permutation[length];
-    
-    // Generate all permutations of distributing total_sum across length categories
-    sums(file, length, total_sum, 0, permutation, 0);
 
-    // Close the configurations file
+int main(int argc, char *argv[]) {
+    int numCastles = 0;
+    int numTroops = 0;
+    int opt;
+    char filename[100];
+
+    // Parse command-line arguments for numCastles and numTroops
+    while ((opt = getopt(argc, argv, "c:t:")) != -1) {
+        switch (opt) {
+            case 'c':
+                numCastles = atoi(optarg);
+                break;
+            case 't':
+                numTroops = atoi(optarg);
+                break;
+            default:
+                fprintf(stderr, "Usage: %s -c numCastles -t numTroops\n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
+    }
+
+    if (numCastles <= 0 || numTroops <= 0) {
+        fprintf(stderr, "Invalid numCastles or numTroops values.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Allocate memory for the permutation array
+    int* permutation = (int*)malloc(sizeof(int) * numCastles);
+    if (!permutation) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Create filename for the configurations file
+    sprintf(filename, "configurations/C%02d_T%03d.txt", numCastles, numTroops);
+    
+    // Open the configurations file for writing
+    FILE *file = fopen(filename, "w");
+    if (file == NULL) {
+        fprintf(stderr, "Unable to open file: %s\n", filename);
+        exit(EXIT_FAILURE);
+    }
+    
+    // Generate all permutations of distributing numTroops across numCastles categories
+    sums(file, numCastles, numTroops, permutation, 0);
+
+    // Close the configurations file and free the allocated memory
     fclose(file);
+    free(permutation);
  
     return 0;
 }

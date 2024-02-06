@@ -3,3 +3,6 @@ results/
 
 # Configuration files and directories
 configurations/
+
+# Execution profiling directory
+profiling/

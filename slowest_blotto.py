@@ -1,7 +1,7 @@
-# note to self: using treehacks env
-import csv
-import itertools
+import os
 import json
+import itertools
+import argparse
 
 def sums(length, total_sum):
     if length == 1:
@@ -45,82 +45,49 @@ def game(player1, player2, numCastles):
         return -1
     if p1_score == p2_score:
         return 0
+
+def play_game(i, j, player1, player2, numCastles, numTroops):
+    result = game(player1, player2, numCastles)
+
+    filename = f"results/C{numCastles:02}_T{numTroops:03}/{i}_{j}_{result}.txt"
+
+    file =  open(filename, "w")
+    file.close()
+    return
+
+def tournament(numCastles, numTroops):
+    strategies = list(sums(numCastles, numTroops))
+    foldername = f"results/C{numCastles:02}_T{numTroops:03}"
     
-def tournament(numTroops, numCastles):
-    strategies = list(sums(numCastles, numTroops))
-    competitors = {}
-    for allocation in strategies:
-        competitors[allocation] = [0, 0, 0]
-    file_data = []
-    highest_score = 0
-    gameMatrix = [[0 for i in range(len(strategies))] for j in range(len(strategies))]
-    for i, player1 in enumerate(competitors):
-        for j, player2 in enumerate(competitors):
-            result = game(player1, player2, numCastles)
-            gameMatrix[i][j] = result
-            if result == 1:
-                competitors[player1][0] += 1
-                competitors[player2][1] += 1
-            if result == -1:
-                competitors[player2][0] += 1
-                competitors[player1][1] += 1
-            else:
-                competitors[player1][2] += 1
-                competitors[player2][2] += 1
-    file_data.append(str(competitors))
-    file_data.append(str(gameMatrix))
-    filename = f"C{numCastles:02}-T{numTroops:03}.txt"
+    # create folder if doesn't exist
+    if not os.path.exists(foldername):
+        os.makedirs(foldername)
 
-    with open(filename, "w") as fle:
-        json.dump(file_data, fle)
+    for i, player1 in enumerate(strategies):
+        for j, player2 in enumerate(strategies):
+            play_game(i, j, player1, player2, numCastles, numTroops)
 
-def csvtournament(numTroops, numCastles):
-    strategies = list(sums(numCastles, numTroops))
-    competitors = {}
-    for allocation in strategies:
-        competitors[allocation] = [0, 0, 0]
-    winners = []
-    highest_score = 0
-    gameMatrix = [[0 for i in range(len(strategies))] for j in range(len(strategies))] 
-    for i, player1 in enumerate(competitors):
-        for j, player2 in enumerate(competitors):
-            result = game(player1, player2, numCastles)
-            gameMatrix[i][j] = result
-            if result == 1:
-                competitors[player1][0] += 1 # Player 1 win
-                competitors[player2][1] += 1 # Player 2 loss
-            if result == -1:
-                competitors[player2][0] += 1 # Player 2 win
-                competitors[player1][1] += 1 # Player 1 loss
-            if result == 0:
-                competitors[player1][2] += 1 # tie
-                competitors[player1][2] += 1 # tie
-    all_scores = competitors.values()
-    highest_score = max(all_scores)
-    for player in competitors:
-        if competitors[player] == highest_score:
-            winners.append(player)
-    print(gameMatrix)
+    return
 
-    fields = ["win_percentile"]
-    for i in range(1, numCastles + 1):
-        fields.append("c" + str(i))
-    rows = []
-    for strategy in competitors:
-        profile = [(competitors[strategy][0]/competitors[strategy][0] + competitors[strategy][1] + competitors[strategy][2])]
-        for troops in strategy:
-            profile.append(troops)
-        rows.append(profile)
-    filename = 'csvBlotto, numCastles = ' + str(numCastles) + ", numTroops =" + str(numTroops)
-    # writing to csv file
-    with open(filename, 'w') as csvfile:
-    # creating a csv writer object
-        csvwriter = csv.writer(csvfile)
+def main():
+    # Initialize parser
+    parser = argparse.ArgumentParser(description='Play a series of games and record the results.')
+    
+    # arguments for numCastles, numTroops
+    parser.add_argument("-c", "--castles", required=True, type=int, help="Number of Castles")
+    parser.add_argument("-t", "--troops", required=True, type=int, help="Number of Troops")
+    
+    # Read arguments from command line
+    args = parser.parse_args()
 
-    # writing the fields
-        csvwriter.writerow(fields)
+    # Parameters
+    numCastles = args.castles
+    numTroops = args.troops
 
-    # writing the data rows
-        csvwriter.writerows(rows)
+    # Run the tournament
+    tournament(numCastles, numTroops)
+    
+    print(f"Tournament completed for {numCastles} castles and {numTroops} troops.")
 
-tournament(2,100)
+if __name__ == "__main__":
+    main()
