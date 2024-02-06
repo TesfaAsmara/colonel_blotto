@@ -18,8 +18,9 @@ def extract_time_from_file(filename):
 # CASTLES = 2
 # TROOPS = [25, 50, 75, 100, 150, 300, 600]
 CASTLES = 3
-TROOPS = [10, 25]
-programs = ['sums', 'blotto', 'slowest_blotto_py']
+# 10, 25
+TROOPS = [5, 10, 15]
+programs = ['sums', 'blotto', 'blotto_jit_py', 'slowest_blotto_py']
 
 # Prepare the data 
 times = {program: [] for program in programs}

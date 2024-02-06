@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 CASTLES=3
-TROOPS=10 25 50 75
+TROOPS=5 10 15 20 25 30
 
 .PHONY: all run_blotto run_sums profile_blotto profile_sums
 
@@ -37,6 +37,7 @@ profile_all:
 		echo "Running for $(CASTLES) castles and $(troop) troops";\
 		{ time ./sums -c $(CASTLES) -t $(troop); } > profiling/sums_c_$(CASTLES)_t_$(troop)_profile.txt 2>&1;\
 		{ time ./blotto -c $(CASTLES) -t $(troop); } > profiling/blotto_c_$(CASTLES)_t_$(troop)_profile.txt 2>&1;\
+        { time python blotto_jit.py -c $(CASTLES) -t $(troop); } > profiling/blotto_jit_py_c_$(CASTLES)_t_$(troop)_profile.txt 2>&1;\
 		{ time python slowest_blotto.py -c $(CASTLES) -t $(troop); } > profiling/slowest_blotto_py_c_$(CASTLES)_t_$(troop)_profile.txt 2>&1;\
 	) \
 	python plot_profiling.py

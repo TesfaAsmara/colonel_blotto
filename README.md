@@ -15,8 +15,6 @@ I am interested in multiple directions:
     - We can represent the relationship between configurations utilizing a directed graph. 
     What methods can we apply to the graph?
 
+You can follow along with my progress through the [notes](notes/) directory.
 
-
-
-
-
+The files of importance are `slowest_blotto.py`, `blotto.jit.py`, `sums.c`, `blotto.c`, `Makefile`, and `plot_profiling.py`.
