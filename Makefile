@@ -1,6 +1,6 @@
 SHELL := /bin/bash
-CASTLES=3
-TROOPS=5 10 15 20 25 30
+CASTLES=10
+TROOPS=1 10
 
 .PHONY: all run_blotto run_sums profile_blotto profile_sums
 

@@ -15,11 +15,8 @@ def extract_time_from_file(filename):
     return None
 
 # Define the castles, troops, and programs
-# CASTLES = 2
-# TROOPS = [25, 50, 75, 100, 150, 300, 600]
-CASTLES = 3
-# 10, 25
-TROOPS = [5, 10, 15]
+CASTLES = 10
+TROOPS = [1, 10]
 programs = ['sums', 'blotto', 'blotto_jit_py', 'slowest_blotto_py']
 
 # Prepare the data 

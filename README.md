@@ -21,3 +21,7 @@ I am interested in multiple directions:
 You can follow along with my progress through the [notes](notes/) directory.
 
 The files of importance are `slowest_blotto.py`, `blotto.jit.py`, `sums.c`, `blotto.c`, `Makefile`, and `plot_profiling.py`.
+
+You may need "configurations/", "profiling/", and "results/" directories.
+
+You'll need to have numba and joblib i
