@@ -87,7 +87,6 @@ def main():
     # Run the tournament
     tournament(numCastles, numTroops)
     
-    print(f"Tournament completed for {numCastles} castles and {numTroops} troops.")
 
 if __name__ == "__main__":
     main()

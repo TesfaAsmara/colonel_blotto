@@ -1,7 +1,9 @@
 import os
 import json
+from joblib import Parallel, delayed
+from numba import jit
 import itertools
-import argparse
+
 
 def sums(length, total_sum):
     if length == 1:
@@ -11,7 +13,23 @@ def sums(length, total_sum):
             for permutation in sums(length - 1, total_sum - value):
                 yield (value,) + permutation
 
-def game(player1, player2, numCastles):
+@jit
+def game_jit(player1, player2, numCastles):
+    '''
+    returns  1 if 
+             0 if 
+            -1 if
+            
+    Inputs
+        player1:
+        player2:
+        numCastles: 
+
+    Variables
+        p1_score: ...
+        ...
+        
+    '''
     p1_score = 0
     p2_score = 0
     n = 0
@@ -47,7 +65,7 @@ def game(player1, player2, numCastles):
         return 0
 
 def play_game(i, j, player1, player2, numCastles, numTroops):
-    result = game(player1, player2, numCastles)
+    result = game_jit(player1, player2, numCastles)
 
     filename = f"results/C{numCastles:02}_T{numTroops:03}/{i}_{j}_{result}.txt"
 
@@ -62,16 +80,17 @@ def tournament(numCastles, numTroops):
     # create folder if doesn't exist
     if not os.path.exists(foldername):
         os.makedirs(foldername)
-
-    for i, player1 in enumerate(strategies):
-        for j, player2 in enumerate(strategies):
-            play_game(i, j, player1, player2, numCastles, numTroops)
-
+    
+    results = Parallel(n_jobs=8)(
+    delayed(play_game)(i, j, player1, player2, numCastles, numTroops) 
+    for i, player1 in enumerate(strategies) 
+    for j, player2 in enumerate(strategies) if i != j
+    )
     return
 
 def main():
     # Initialize parser
-    parser = argparse.ArgumentParser(description='Play a series of games and record the results.')
+    parser = argparse.ArgumentParser(description='Play a series of games and record the results, sped up by jit.')
     
     # arguments for numCastles, numTroops
     parser.add_argument("-c", "--castles", required=True, type=int, help="Number of Castles")
@@ -79,14 +98,13 @@ def main():
     
     # Read arguments from command line
     args = parser.parse_args()
-
+    
     # Parameters
     numCastles = args.castles
     numTroops = args.troops
-
+    
     # Run the tournament
     tournament(numCastles, numTroops)
-    
 
 if __name__ == "__main__":
     main()

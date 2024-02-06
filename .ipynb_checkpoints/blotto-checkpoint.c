@@ -77,16 +77,36 @@ void play_game(int i, int j, int* player1, int* player2, int numCastles, int num
 }
 
 
-// Function to find factorial of given number (https://www.geeksforgeeks.org/c-program-for-factorial-of-a-number/)
-long long int factorial(long long int num) {
-    long long int result = 1, i;
+// // Function to find factorial of given number (https://www.geeksforgeeks.org/c-program-for-factorial-of-a-number/)
+// long long int factorial(long long int num) {
+//     long long int result = 1, i;
  
-    for(i = 1; i <= num; i++) { // Start a loop to calculate factorial.
-        result = result * i;  // Calculate factorial.
-        printf("result = %llu\n", result);
-    }
+//     for(i = 1; i <= num; i++) { // Start a loop to calculate factorial.
+//         result = result * i;  // Calculate factorial.
+//         printf("result = %llu\n", result);
+//     }
     
-    return result;
+//     return result;
+// }
+
+int count_lines(const char* filename) {
+    FILE* file = fopen(filename, "r"); // Open the file for reading
+    if (!file) {
+        perror("Unable to open the file");
+        return -1; // Return -1 to indicate error
+    }
+
+    int lines = 0;
+    int ch;
+    while(!feof(file)) {
+        ch = fgetc(file);
+        if(ch == '\n') {
+            lines++;
+        }
+    }
+
+    fclose(file); // Don't forget to close the file
+    return lines;
 }
 
 // Function: tournament
@@ -98,14 +118,17 @@ long long int factorial(long long int num) {
 //
 void tournament(int numCastles, int numTroops) {
     char configurations_filename[100];
-    long long int max_configurations_numerator = factorial(numTroops+numCastles-1);
-    long long int max_configurations_denominator = factorial(numTroops)*factorial(numCastles-1);
-    long long int MAX_CONFIGURATIONS = max_configurations_numerator/max_configurations_denominator;
-    printf("MAX_CONFIGS =  %lld\n numerator = %lld\n denominator = %lld\n", MAX_CONFIGURATIONS,max_configurations_numerator,  max_configurations_denominator);
-    int strategies[MAX_CONFIGURATIONS][numCastles];
-
+    // long long int max_configurations_numerator = factorial(numTroops+numCastles-1);
+    // long long int max_configurations_denominator = factorial(numTroops)*factorial(numCastles-1);
+    // long long int MAX_CONFIGURATIONS = max_configurations_numerator/max_configurations_denominator;
+    // printf("MAX_CONFIGS =  %lld\n numerator = %lld\n denominator = %lld\n", MAX_CONFIGURATIONS,max_configurations_numerator,  max_configurations_denominator);
+    
     // Create filename for the configurations file
     sprintf(configurations_filename, "configurations/C%02d_T%03d.txt", numCastles, numTroops);
+
+    int MAX_CONFIGURATIONS = count_lines(configurations_filename);
+    int strategies[MAX_CONFIGURATIONS][numCastles];
+
     
     FILE* configurations_file = fopen(configurations_filename, "r");
     if (configurations_file == NULL) {
@@ -128,9 +151,6 @@ void tournament(int numCastles, int numTroops) {
     
     if (count == 0) {
         printf("No strategies read from the file.\n");
-        return;
-    } else if (count != MAX_CONFIGURATIONS) {
-        printf("%d strategies read from the file does not match expected %lld\n", count, MAX_CONFIGURATIONS);
         return;
     }
 
