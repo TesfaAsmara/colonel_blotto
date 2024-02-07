@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <omp.h>
 #define MAX_FILENAME_LENGTH 100
 
 // Function: game
@@ -128,7 +129,6 @@ void tournament(int numCastles, int numTroops) {
 
     int MAX_CONFIGURATIONS = count_lines(configurations_filename);
     int strategies[MAX_CONFIGURATIONS][numCastles];
-
     
     FILE* configurations_file = fopen(configurations_filename, "r");
     if (configurations_file == NULL) {
@@ -154,6 +154,7 @@ void tournament(int numCastles, int numTroops) {
         return;
     }
 
+    #pragma omp parallel for
     for (int i = 0; i < count; i++) {
         for (int j = 0; j < count; j++) {
             if (i != j) {

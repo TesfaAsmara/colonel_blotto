@@ -24,4 +24,4 @@ The files of importance are `slowest_blotto.py`, `blotto.jit.py`, `sums.c`, `blo
 
 You may need "configurations/", "profiling/", and "results/" directories.
 
-You'll need to have numba and joblib i
+You'll need to have numba and joblib installed for the python code.

@@ -45,6 +45,14 @@ void sums(FILE *file, int length, int total_sum, int permutation[], int pos) {
     }
 }
 
+numCastles = 3
+numTroops = 3
+_, _, _, 0
+0, _, _, 0 \\ total_sum - 0
+1, _, _, 0 \\ total_sum - 1
+2, _, _, 0 \\ total_sum - 2
+3, _, _, 0 \\ total_sum - 3
+
 
 int main(int argc, char *argv[]) {
     int numCastles = 0;

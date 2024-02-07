@@ -7,7 +7,7 @@ TROOPS=1 10
 all: blotto sums
 
 blotto: blotto.c
-	gcc -g -Wall -Wextra -pg -O3 -march=native -funroll-loops -flto -o blotto blotto.c
+	gcc -fopenmp -g -Wall -Wextra -pg -O3 -march=native -funroll-loops -flto -o blotto blotto.c
 # gcc -pg -O3 -o blotto blotto.c
 
 sums: sums.c
