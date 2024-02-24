@@ -43,7 +43,7 @@ test: blotto_omp blotto sums make_dirs
 		./sums -c 6 -t $$size; \
 		time ./blotto -c 6 -t $$size; \
 		export OMP_NUM_THREADS=4; \
-		echo "Useing $$OMP_NUM_THREADS threads"; \
+		echo "Using $$OMP_NUM_THREADS threads"; \
 		time ./blotto_omp -c 6 -t $$size;\
 		echo ""; \
 		echo "Compare the outcomes";\
