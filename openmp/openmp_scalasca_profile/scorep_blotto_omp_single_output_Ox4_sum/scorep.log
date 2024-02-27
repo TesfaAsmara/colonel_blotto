@@ -1,0 +1,4 @@
+S=C=A=N: Sun Feb 25 17:40:28 2024: Collect start
+ ./blotto_omp_single_output -c 6 -t 21
+Num threads: 4 
+S=C=A=N: Sun Feb 25 17:50:34 2024: Collect done (status=0) 606s

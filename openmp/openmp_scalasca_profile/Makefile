@@ -3,13 +3,13 @@ CASTLES=6
 TROOPS=10 15
 SUMS_OUTPUT_DIR=./configurations
 RESULT_DIR=./results
-TEST_SIZES := 10 13 
+TEST_SIZES := 21
 
 .PHONY: all run_blotto run_sums profile_blotto profile_sums
 
 all: blotto_omp sums
 
-blotto_omp: blotto_omp.c
+blotto_omp: blotto_omp.c blotto_omp_single_output.c
 	gcc -fopenmp -g -pg -O3 -o blotto_omp blotto_omp.c
 	gcc -fopenmp -g -pg -O3 -o blotto_omp_single_output blotto_omp_single_output.c
 
@@ -38,18 +38,23 @@ run_blotto_omp: blotto_omp
 run_sums: sums
 	./sums -c 6 -t 10
 
-test: blotto_omp blotto sums make_dirs
+skin_blotto_test: blotto.c blotto_omp.c blotto_omp_single_output.c
+	skin gcc -fopenmp -O3 -o blotto_omp blotto_omp.c
+	skin gcc -fopenmp -O3 -o blotto_omp_single_output blotto_omp_single_output.c
+	skin gcc -fopenmp -O3 -o blotto blotto.c
+
+skin_test: skin_blotto_test sums make_dirs
 	@for size in $(TEST_SIZES); do \
 		echo "Comparing -c 6 -t $$size"; \
 		./sums -c 6 -t $$size; \
-		time ./blotto -c 6 -t $$size; \
+		scan ./blotto -c 6 -t $$size; \
 		export OMP_NUM_THREADS=4; \
 		echo "With $$OMP_NUM_THREADS threads"; \
 		echo "Single output"; \
-		time ./blotto_omp_single_output -c 6 -t $$size;\
+		scan ./blotto_omp_single_output -c 6 -t $$size;\
 		wc output_omp_single*; \
 		echo "Multi outputs"; \
-		time ./blotto_omp -c 6 -t $$size;\
+		scan ./blotto_omp -c 6 -t $$size;\
 		echo ""; \
 		echo "Compare the outcomes";\
 		wc output_omp_t*; echo "";  \
@@ -94,3 +99,4 @@ veryclean: clean
 	rm -rf $(RESULT_DIR)
 	rm -rf *.dSYM
 	rm -rf *.txt
+	rm -rf scorep*
