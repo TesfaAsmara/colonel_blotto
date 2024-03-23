@@ -15,35 +15,42 @@ def extract_time_from_file(filename):
     return None
 
 # Define the castles, troops, and programs
-CASTLES = 10
-TROOPS = [1, 10]
-programs = ['sums', 'blotto', 'blotto_jit_py', 'slowest_blotto_py']
+CASTLES = [2, 3]
+TROOPS = [5, 10, 20, 30 ,40, 50, 60, 70, 80, 90, 100]
+programs = ['sums', 'blotto', 'blotto_parallel','blotto_jit_py', 'blotto_jit_parallel_py', 'slowest_blotto_py']
 
-# Prepare the data 
-times = {program: [] for program in programs}
+# Loop through each castle and create a plot
+for castle in CASTLES:
+    plt.figure(figsize=(10, 6))
+    
+    # Prepare the data for each program
+    times = {program: [] for program in programs}
+    
+    # Extract the time for each program and troop count for the current castle
+    for troop in TROOPS:
+        for program in programs:
+            filename = f'profiling/{program}_c_{castle}_t_{troop}_profile.txt'
+            time = extract_time_from_file(filename)
+            if time is not None:
+                times[program].append(time)
+            else:
+                print(f"Time data not found in file: {filename}")
+    
+    # Plotting the data for the current castle
+    for program, time_data in times.items():
+        plt.plot(TROOPS, time_data, label=program, marker='o')
+    
+    plt.xlabel('Number of Troops')
+    plt.ylabel('Execution Time (seconds)')
+    plt.title(f'Execution Time vs Number of Troops for Castle {castle}')
+    plt.legend()
+    plt.grid(True)
+    
+    # Save the figure to a file for the current castle
+    plt.savefig(f'execution_times_castle_{castle}.png', dpi=300)
+    
+    # Optionally display the plot
+    # plt.show()
 
-# Extract the time for each program and troop count
-for troop in TROOPS:
-    for program in programs:
-        filename = f'profiling/{program}_c_{CASTLES}_t_{troop}_profile.txt'
-        time = extract_time_from_file(filename)
-        if time is not None:
-            times[program].append(time)
-        else:
-            print(f"Time data not found in file: {filename}")
-
-
-# Plotting the data
-for program, time_data in times.items():
-    plt.plot(TROOPS, time_data, label=program)
-
-plt.xlabel('Number of Troops')
-plt.ylabel('Execution Time (seconds)')
-plt.title('Execution Time vs Number of Troops')
-plt.legend()
-
-# Save the figure to a file
-plt.savefig('execution_times.png', dpi=300)
-
-# Optionally display the plot
-# plt.show()
+# Close all figures to free memory
+plt.close('all')

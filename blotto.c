@@ -68,7 +68,7 @@ void play_game(int i, int j, int* player1, int* player2, int numCastles, int num
     char filename[MAX_FILENAME_LENGTH];
 
     // Create filename for the result file
-    sprintf(filename, "results/C%02d_T%03d/%d_%d_%d.txt", numCastles, numTroops, i, j, result);
+    sprintf(filename, "/home/jovyan/data3/results/C%02d_T%03d/%d_%d_%d.txt", numCastles, numTroops, i, j, result);
     FILE* file = fopen(filename, "w");
     if (file != NULL) {
         fclose(file);
@@ -125,7 +125,7 @@ void tournament(int numCastles, int numTroops) {
     // printf("MAX_CONFIGS =  %lld\n numerator = %lld\n denominator = %lld\n", MAX_CONFIGURATIONS,max_configurations_numerator,  max_configurations_denominator);
     
     // Create filename for the configurations file
-    sprintf(configurations_filename, "configurations/C%02d_T%03d.txt", numCastles, numTroops);
+    sprintf(configurations_filename, "/home/jovyan/data3/configurations/C%02d_T%03d.txt", numCastles, numTroops);
 
     int MAX_CONFIGURATIONS = count_lines(configurations_filename);
     int strategies[MAX_CONFIGURATIONS][numCastles];
@@ -154,9 +154,10 @@ void tournament(int numCastles, int numTroops) {
         return;
     }
 
-    #pragma omp parallel for
+
     for (int i = 0; i < count; i++) {
-        for (int j = 0; j < count; j++) {
+        // j starts at i += 1 because we have symmetry in the strategies
+        for (int j = i+1; j < count; j++) {
             if (i != j) {
                 play_game(i, j, strategies[i], strategies[j], numCastles, numTroops);
             }

@@ -23,7 +23,7 @@ pip_install_cmd = Path("/bin/pip install")
 pip_packages = []
 
 # Conda packages to install
-conda_packages = ["numba", "joblib"]
+conda_packages = ["numba", "joblib", "matplotlib"]
 
 # Go ahead and install the pip packages
 for pkg in pip_packages:
